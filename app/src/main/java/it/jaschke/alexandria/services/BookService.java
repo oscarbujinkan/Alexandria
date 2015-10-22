@@ -61,7 +61,7 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void deleteBook(String ean) {
-        if(ean!=null) {
+        if(ean!=null&&!ean.isEmpty()) {
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
         }
     }
@@ -155,7 +155,12 @@ public class BookService extends IntentService {
         final String CATEGORIES = "categories";
         final String IMG_URL_PATH = "imageLinks";
         final String IMG_URL = "thumbnail";
-
+        if(bookJsonString==null){
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found_check_internet));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+            return;
+        }
         try {
             JSONObject bookJson = new JSONObject(bookJsonString);
             JSONArray bookArray;
